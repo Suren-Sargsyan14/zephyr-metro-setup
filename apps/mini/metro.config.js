@@ -1,3 +1,4 @@
+const { withZephyr } = require("zephyr-metro-plugin");
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 /**
@@ -8,4 +9,4 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
  */
 const config = {};
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = (async () => { const __zephyrConfig = await mergeConfig(getDefaultConfig(__dirname), config); return withZephyr()(typeof __zephyrConfig === "function" ? await __zephyrConfig() : __zephyrConfig); })();
