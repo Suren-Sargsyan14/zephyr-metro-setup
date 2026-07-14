@@ -25,6 +25,27 @@ const shared = {
     version: '0.86.0',
     import: false,
   },
+  '@react-navigation/native': {
+    singleton: true,
+    eager: false,
+    requiredVersion: '7.3.8',
+    version: '7.3.8',
+    import: false,
+  },
+  'react-native-screens': {
+    singleton: true,
+    eager: false,
+    requiredVersion: '4.26.1',
+    version: '4.26.1',
+    import: false,
+  },
+  'react-native-safe-area-context': {
+    singleton: true,
+    eager: false,
+    requiredVersion: '5.8.0',
+    version: '5.8.0',
+    import: false,
+  },
 };
 
 const getConfig = async () => {
@@ -32,7 +53,7 @@ const getConfig = async () => {
     name: 'mini2',
     filename: 'mini2.bundle',
     exposes: {
-      './MiniButton': './src/MiniButton.tsx',
+      './MiniApp': './src/MiniApp.tsx',
     },
     shared,
     shareStrategy: 'version-first',

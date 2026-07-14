@@ -1,74 +1,91 @@
 import React, { Suspense } from 'react';
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 /**
- * Neither card ships in this app's bundle. Each is loaded at runtime over
- * Module Federation from a separate remote (served locally in dev, or from
- * Zephyr Cloud once deployed).
+ * Host owns the single NavigationContainer and a bottom-tab navigator.
+ * Each tab renders a federated stack navigator loaded at runtime from a remote:
+ *   Tab 1 -> mini/MiniApp   (served on :8082)
+ *   Tab 2 -> mini2/MiniApp  (served on :8083)
+ * Neither remote's code ships in this binary.
  */
 // @ts-expect-error - virtual module resolved by Module Federation at runtime
-const MiniButton = React.lazy(() => import('mini/MiniButton'));
+const MiniApp = React.lazy(() => import('mini/MiniApp'));
 // @ts-expect-error - virtual module resolved by Module Federation at runtime
-const Mini2Button = React.lazy(() => import('mini2/MiniButton'));
+const Mini2App = React.lazy(() => import('mini2/MiniApp'));
 
-function RemoteSlot({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function RemoteFallback({ label }: { label: string }) {
   return (
-    <View style={styles.remoteSlot}>
-      <Suspense
-        fallback={
-          <View style={styles.loading}>
-            <ActivityIndicator color="#4f46e5" />
-            <Text style={styles.loadingText}>Loading {label} remote…</Text>
-          </View>
-        }>
-        {children}
-      </Suspense>
+    <View style={styles.fallback}>
+      <ActivityIndicator size="large" color="#4f46e5" />
+      <Text style={styles.fallbackText}>Loading {label} remote…</Text>
     </View>
   );
 }
 
+function MiniOneScreen() {
+  return (
+    <Suspense fallback={<RemoteFallback label="mini" />}>
+      <MiniApp />
+    </Suspense>
+  );
+}
+
+function MiniTwoScreen() {
+  return (
+    <Suspense fallback={<RemoteFallback label="mini2" />}>
+      <Mini2App />
+    </Suspense>
+  );
+}
+
+const Tab = createBottomTabNavigator();
+
 export default function App(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.heading}>Host app</Text>
-        <Text style={styles.subheading}>
-          The cards below are federated modules loaded from the{' '}
-          <Text style={styles.mono}>mini</Text> and{' '}
-          <Text style={styles.mono}>mini2</Text> remotes via Zephyr.
-        </Text>
-
-        <RemoteSlot label="mini">
-          <MiniButton />
-        </RemoteSlot>
-        <RemoteSlot label="mini2">
-          <Mini2Button />
-        </RemoteSlot>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        {/* headerShown:false so only each remote's own stack header shows */}
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: '#4f46e5',
+          }}>
+          <Tab.Screen
+            name="MiniOne"
+            component={MiniOneScreen}
+            options={{
+              title: 'Mini One',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>📦</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="MiniTwo"
+            component={MiniTwoScreen}
+            options={{
+              title: 'Mini Two',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>🛰️</Text>
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#f9fafb' },
-  content: { padding: 24, gap: 16, flexGrow: 1, justifyContent: 'center' },
-  heading: { fontSize: 28, fontWeight: '800', color: '#111827' },
-  subheading: { fontSize: 15, color: '#4b5563', lineHeight: 22 },
-  mono: { fontFamily: 'Courier', fontWeight: '700', color: '#4338ca' },
-  remoteSlot: { marginTop: 12 },
-  loading: { padding: 24, alignItems: 'center', gap: 8 },
-  loadingText: { color: '#6b7280' },
+  fallback: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#f9fafb',
+  },
+  fallbackText: { color: '#6b7280', fontSize: 15 },
 });

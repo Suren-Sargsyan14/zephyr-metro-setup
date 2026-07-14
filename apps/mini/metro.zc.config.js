@@ -4,9 +4,6 @@ const { withModuleFederation } = require('@module-federation/metro');
 
 /**
  * Zephyr-wrapped config. Used when ZC=1 (deploy).
- * withZephyr() takes the same Module Federation options and, at build time,
- * uploads the exposed bundle to Zephyr Cloud and rewrites URLs to the
- * cloud-hosted manifest.
  * @type {import('@react-native/metro-config').MetroConfig}
  */
 const config = {
@@ -28,6 +25,27 @@ const shared = {
     version: '0.86.0',
     import: false,
   },
+  '@react-navigation/native': {
+    singleton: true,
+    eager: false,
+    requiredVersion: '7.3.8',
+    version: '7.3.8',
+    import: false,
+  },
+  'react-native-screens': {
+    singleton: true,
+    eager: false,
+    requiredVersion: '4.26.1',
+    version: '4.26.1',
+    import: false,
+  },
+  'react-native-safe-area-context': {
+    singleton: true,
+    eager: false,
+    requiredVersion: '5.8.0',
+    version: '5.8.0',
+    import: false,
+  },
 };
 
 const getConfig = async () => {
@@ -35,7 +53,7 @@ const getConfig = async () => {
     name: 'mini',
     filename: 'mini.bundle',
     exposes: {
-      './MiniButton': './src/MiniButton.tsx',
+      './MiniApp': './src/MiniApp.tsx',
     },
     shared,
     shareStrategy: 'version-first',

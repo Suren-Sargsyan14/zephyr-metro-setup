@@ -14,6 +14,9 @@ const config = {
   resolver: { useWatchman: false },
 };
 
+// The host eagerly provides the shared singletons. Navigation packages are
+// shared so both remotes' nested stacks use the host's single
+// NavigationContainer and one native react-native-screens instance.
 const shared = {
   react: {
     singleton: true,
@@ -26,6 +29,24 @@ const shared = {
     eager: true,
     requiredVersion: '0.86.0',
     version: '0.86.0',
+  },
+  '@react-navigation/native': {
+    singleton: true,
+    eager: true,
+    requiredVersion: '7.3.8',
+    version: '7.3.8',
+  },
+  'react-native-screens': {
+    singleton: true,
+    eager: true,
+    requiredVersion: '4.26.1',
+    version: '4.26.1',
+  },
+  'react-native-safe-area-context': {
+    singleton: true,
+    eager: true,
+    requiredVersion: '5.8.0',
+    version: '5.8.0',
   },
 };
 
