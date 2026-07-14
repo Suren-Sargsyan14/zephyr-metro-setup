@@ -1,12 +1,8 @@
-const { withZephyr } = require("zephyr-metro-plugin");
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+// Toggle between plain Module Federation (local dev) and Zephyr (deploy).
+// Set ZC=1 to build/serve through Zephyr Cloud.
+const getMfConfig = require('./metro.mf.config.js');
+const getZephyrConfig = require('./metro.zc.config.js');
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const config = {};
+const isZephyr = Boolean(process.env.ZC);
 
-module.exports = (async () => { const __zephyrConfig = await mergeConfig(getDefaultConfig(__dirname), config); return withZephyr()(typeof __zephyrConfig === "function" ? await __zephyrConfig() : __zephyrConfig); })();
+module.exports = isZephyr ? getZephyrConfig() : getMfConfig();
