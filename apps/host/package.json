@@ -10,7 +10,11 @@
     "lint": "eslint .",
     "start": "react-native start",
     "start:zephyr": "ZC=1 react-native start",
+    "adbreverse": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:8082 tcp:8082",
     "test": "jest"
+  },
+  "zephyr:dependencies": {
+    "mini": "mini"
   },
   "dependencies": {
     "@module-federation/runtime": "0.21.6",

@@ -5,8 +5,13 @@ const { withModuleFederation } = require('@module-federation/metro');
 
 /**
  * Zephyr-wrapped host config. Used when ZC=1.
+ * The `mini` remote URL is resolved by Zephyr Cloud at build time from the
+ * "zephyr:dependencies" field in package.json, instead of pointing at
+ * localhost. This is what makes the deployed host load the deployed remote.
  * @type {import('@react-native/metro-config').MetroConfig}
  */
+const miniPort = process.env.MINI_APP_PORT ?? '8082';
+
 const config = {
   resolver: { useWatchman: false },
 };
@@ -29,7 +34,9 @@ const shared = {
 const getConfig = async () => {
   const zephyrConfig = await withZephyr()({
     name: 'host',
-    remotes: {},
+    remotes: {
+      mini: `mini@http://localhost:${miniPort}/mf-manifest.json`,
+    },
     shared,
     shareStrategy: 'loaded-first',
     plugins: [path.resolve(__dirname, './runtime-plugin.ts')],
