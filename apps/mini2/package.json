@@ -1,21 +1,20 @@
 {
-  "name": "Host",
+  "name": "Mini2",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "android:zephyr": "ZC=1 react-native run-android",
-    "ios:zephyr": "ZC=1 react-native run-ios",
     "lint": "eslint .",
-    "start": "react-native start",
-    "start:zephyr": "ZC=1 react-native start",
-    "adbreverse": "adb reverse tcp:8081 tcp:8081 && adb reverse tcp:8082 tcp:8082 && adb reverse tcp:8083 tcp:8083",
-    "test": "jest"
-  },
-  "zephyr:dependencies": {
-    "mini": "mini",
-    "mini2": "mini2"
+    "start": "react-native start --port 8083",
+    "test": "jest",
+    "build:android": "react-native bundle-mf-remote --platform android --dev false",
+    "build:android:zephyr": "ZC=1 react-native bundle-mf-remote --platform android --dev false",
+    "build:ios": "react-native bundle-mf-remote --platform ios --dev false",
+    "build:ios:zephyr": "ZC=1 react-native bundle-mf-remote --platform ios --dev false",
+    "serve:android": "npx --yes serve dist/android -p 8083",
+    "serve:ios": "npx --yes serve dist/ios -p 8083",
+    "adbreverse": "adb reverse tcp:8083 tcp:8083"
   },
   "dependencies": {
     "@module-federation/runtime": "0.21.6",

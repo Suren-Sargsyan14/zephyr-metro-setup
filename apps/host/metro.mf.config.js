@@ -4,10 +4,11 @@ const { withModuleFederation } = require('@module-federation/metro');
 
 /**
  * Plain Module Federation config (NO Zephyr).
- * Consumes the `mini` remote from a local server (localhost:8082).
+ * Consumes the `mini` (:8082) and `mini2` (:8083) remotes from local servers.
  * @type {import('@react-native/metro-config').MetroConfig}
  */
 const miniPort = process.env.MINI_APP_PORT ?? '8082';
+const mini2Port = process.env.MINI2_APP_PORT ?? '8083';
 
 const config = {
   resolver: { useWatchman: false },
@@ -33,6 +34,7 @@ const getConfig = async () => {
     name: 'host',
     remotes: {
       mini: `mini@http://localhost:${miniPort}/mf-manifest.json`,
+      mini2: `mini2@http://localhost:${mini2Port}/mf-manifest.json`,
     },
     shared,
     shareStrategy: 'loaded-first',
