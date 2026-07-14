@@ -1,8 +1,12 @@
 import React, { Suspense } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  type BottomTabScreenProps,
+} from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import RemoteErrorBoundary from './RemoteErrorBoundary';
 
 /**
  * Host owns the single NavigationContainer and a bottom-tab navigator.
@@ -11,37 +15,55 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
  *   Tab 2 -> mini2/MiniApp  (served on :8083)
  * Neither remote's code ships in this binary.
  */
-// @ts-expect-error - virtual module resolved by Module Federation at runtime
 const MiniApp = React.lazy(() => import('mini/MiniApp'));
-// @ts-expect-error - virtual module resolved by Module Federation at runtime
 const Mini2App = React.lazy(() => import('mini2/MiniApp'));
 
-function RemoteFallback({ label }: { label: string }) {
+export type RootTabParamList = {
+  MiniOne: undefined;
+  MiniTwo: undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
+
+/** Renders a lazily-loaded remote with both loading (Suspense) and failure
+ * (error boundary) states handled. */
+function RemoteScreen({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
-    <View style={styles.fallback}>
-      <ActivityIndicator size="large" color="#4f46e5" />
-      <Text style={styles.fallbackText}>Loading {label} remote…</Text>
-    </View>
+    <RemoteErrorBoundary label={label}>
+      <Suspense
+        fallback={
+          <View style={styles.fallback}>
+            <ActivityIndicator size="large" color="#4f46e5" />
+            <Text style={styles.fallbackText}>Loading {label} remote…</Text>
+          </View>
+        }>
+        {children}
+      </Suspense>
+    </RemoteErrorBoundary>
   );
 }
 
-function MiniOneScreen() {
+function MiniOneScreen(_: BottomTabScreenProps<RootTabParamList, 'MiniOne'>) {
   return (
-    <Suspense fallback={<RemoteFallback label="mini" />}>
+    <RemoteScreen label="mini">
       <MiniApp />
-    </Suspense>
+    </RemoteScreen>
   );
 }
 
-function MiniTwoScreen() {
+function MiniTwoScreen(_: BottomTabScreenProps<RootTabParamList, 'MiniTwo'>) {
   return (
-    <Suspense fallback={<RemoteFallback label="mini2" />}>
+    <RemoteScreen label="mini2">
       <Mini2App />
-    </Suspense>
+    </RemoteScreen>
   );
 }
-
-const Tab = createBottomTabNavigator();
 
 export default function App(): React.JSX.Element {
   return (
