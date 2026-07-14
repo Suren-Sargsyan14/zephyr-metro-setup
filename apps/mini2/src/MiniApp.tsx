@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Button, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
+import LikesCard from './LikesCard';
 
 /**
  * Exposed over Module Federation as `mini2/MiniApp`. A second, independent
@@ -24,18 +17,17 @@ type Mini2StackParamList = {
 
 const Stack = createNativeStackNavigator<Mini2StackParamList>();
 
-function Mini2Home({ navigation }: NativeStackScreenProps<Mini2StackParamList, 'Mini2Home'>) {
-  const [likes, setLikes] = useState(0);
+function Mini2Home({
+  navigation,
+}: NativeStackScreenProps<Mini2StackParamList, 'Mini2Home'>) {
   return (
     <ScrollView contentContainerStyle={styles.screen}>
-      <View style={styles.card}>
-        <Text style={styles.badge}>🛰️ mini2 remote · own stack</Text>
-        <Text style={styles.title}>Hello from Mini Two!</Text>
-        <TouchableOpacity style={styles.button} onPress={() => setLikes(n => n + 1)} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>❤️ {likes} likes</Text>
-        </TouchableOpacity>
-      </View>
-      <Button title="Open Settings →" color="#047857" onPress={() => navigation.navigate('Mini2Settings')} />
+      <LikesCard />
+      <Button
+        title="Open Settings →"
+        color="#047857"
+        onPress={() => navigation.navigate('Mini2Settings')}
+      />
     </ScrollView>
   );
 }
@@ -70,19 +62,7 @@ export default function MiniApp() {
 const styles = StyleSheet.create({
   screen: { flexGrow: 1, padding: 20, gap: 16 },
   center: { justifyContent: 'center', alignItems: 'center', gap: 16 },
-  card: {
-    padding: 20,
-    borderRadius: 16,
-    backgroundColor: '#ecfdf5',
-    borderWidth: 1,
-    borderColor: '#a7f3d0',
-    alignItems: 'center',
-    gap: 12,
-  },
-  badge: { fontSize: 12, color: '#047857', fontWeight: '600' },
   title: { fontSize: 20, fontWeight: '800', color: '#064e3b' },
   body: { fontSize: 15, color: '#374151', lineHeight: 22 },
-  button: { backgroundColor: '#059669', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 999 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 15 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 });
