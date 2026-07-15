@@ -6,6 +6,10 @@ const commands = require('@module-federation/metro-plugin-rnc-cli');
 const { updateManifest } = require('@module-federation/metro');
 const { zephyrCommandWrapper } = require('zephyr-metro-plugin');
 
+// Only route through Zephyr (upload + browser OAuth) when ZC=1. Without it, a
+// plain `bundle-mf-remote` produces a local bundle with no `zephyr login`.
+const useZephyr = Boolean(process.env.ZC);
+
 const wrappedFuncPromise = zephyrCommandWrapper(
   commands.bundleMFRemoteCommand.func,
   commands.loadMetroConfig,
@@ -22,6 +26,9 @@ const zephyrCommand = {
   description:
     'Bundles a Module Federation remote, including its container entry and all exposed modules for consumption by host applications',
   func: async (...args) => {
+    if (!useZephyr) {
+      return commands.bundleMFRemoteCommand.func(...args);
+    }
     const wrappedFunc = await wrappedFuncPromise;
     return wrappedFunc(...args);
   },
