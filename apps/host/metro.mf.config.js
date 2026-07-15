@@ -10,6 +10,15 @@ const { withModuleFederation } = require('@module-federation/metro');
 const miniPort = process.env.MINI_APP_PORT ?? '8082';
 const mini2Port = process.env.MINI2_APP_PORT ?? '8083';
 
+// Remote manifest URLs default to the local dev servers, but can be pointed at
+// deployed Zephyr Cloud remotes by setting MINI_REMOTE_URL / MINI2_REMOTE_URL
+// (full mf-manifest.json URLs). Lets a plain debug build consume cloud remotes.
+const miniManifest =
+  process.env.MINI_REMOTE_URL ?? `http://localhost:${miniPort}/mf-manifest.json`;
+const mini2Manifest =
+  process.env.MINI2_REMOTE_URL ??
+  `http://localhost:${mini2Port}/mf-manifest.json`;
+
 const config = {
   resolver: { useWatchman: false },
 };
@@ -54,8 +63,8 @@ const getConfig = async () => {
   const mfConfig = {
     name: 'host',
     remotes: {
-      mini: `mini@http://localhost:${miniPort}/mf-manifest.json`,
-      mini2: `mini2@http://localhost:${mini2Port}/mf-manifest.json`,
+      mini: `mini@${miniManifest}`,
+      mini2: `mini2@${mini2Manifest}`,
     },
     shared,
     shareStrategy: 'loaded-first',
