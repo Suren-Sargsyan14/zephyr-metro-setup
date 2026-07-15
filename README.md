@@ -30,6 +30,15 @@ context and one native screens instance.
   <img src="docs/android-mini2-stack-settings.png" width="260" alt="mini2 stack pushed to Settings" />
 </p>
 
+## Demo
+
+Deploying the remotes to Zephyr Cloud, then the host on the Android emulator
+loading both remotes from their hosted URLs (local remote servers off):
+
+<video src="https://github.com/Suren-Sargsyan14/zephyr-metro-setup/raw/main/docs/demo.mp4" controls width="640"></video>
+
+▶️ If the player doesn't load, [watch/download the clip directly](https://github.com/Suren-Sargsyan14/zephyr-metro-setup/raw/main/docs/demo.mp4).
+
 ## Prerequisites
 
 - Node ≥ 18 (tested on 22), npm ≥ 10
