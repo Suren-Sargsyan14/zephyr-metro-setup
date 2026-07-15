@@ -32,3 +32,6 @@ apps/*/vendor/
 # env / secrets (never commit Zephyr tokens)
 .env
 .env.*
+
+# raw screen recordings (commit compressed docs/demo.mp4 instead)
+*.mov
